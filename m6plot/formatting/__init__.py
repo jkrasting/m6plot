@@ -9,6 +9,7 @@ __all__ = [
     'linCI',
     'pmCI',
     'setFigureSize',
+    'VerticalSplitScale',
     ]
 
 for func in __all__:
