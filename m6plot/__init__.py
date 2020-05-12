@@ -13,7 +13,6 @@ funcs = [
     'cm',
     'xycompare',
     'xyplot',
-    'yzWeight',
     'yzcompare',
     'yzplot',
     'ztplot',

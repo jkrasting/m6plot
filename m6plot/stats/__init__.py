@@ -5,6 +5,7 @@
 __all__ = [
     'calc',
     'corr',
+    'yzWeight',
     ]
 
 for func in __all__:

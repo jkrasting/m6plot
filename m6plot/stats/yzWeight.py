@@ -1,3 +1,6 @@
+import numpy
+import numpy.matlib
+
 def yzWeight(y, z):
   """
   Calculates the weights to use when calculating the statistics of a y-z section.

@@ -1,3 +1,11 @@
+from . import cm
+from . import coords
+from . import formatting
+from . import stats
+import matplotlib.pyplot as plt
+import m6toolbox
+import numpy as np
+
 def yzplot(field, y=None, z=None,
   ylabel=None, yunits=None, zlabel=None, zunits=None,
   splitscale=None,
@@ -38,28 +46,31 @@ def yzplot(field, y=None, z=None,
   interactive If true, adds interactive features such as zoom, close and cursor. Default False.
   """
 
+  c = cm.dunne_pm()
+  c = cm.dunne_rainbow()
+
   # Create coordinates if not provided
-  ylabel, yunits, zlabel, zunits = createYZlabels(y, z, ylabel, yunits, zlabel, zunits)
+  ylabel, yunits, zlabel, zunits = formatting.createYZlabels(y, z, ylabel, yunits, zlabel, zunits)
   if debug: print('y,z label/units=',ylabel,yunits,zlabel,zunits)
-  if len(y)==z.shape[-1]: y = expand(y)
+  if len(y)==z.shape[-1]: y = coords.expand(y)
   elif len(y)==z.shape[-1]+1: y = y
   else: raise Exception('Length of y coordinate should be equal or 1 longer than horizontal length of z')
-  if ignore is not None: maskedField = numpy.ma.masked_array(field, mask=[field==ignore])
+  if ignore is not None: maskedField = np.ma.masked_array(field, mask=[field==ignore])
   else: maskedField = field.copy()
   yCoord, zCoord, field2 = m6toolbox.section2quadmesh(y, z, maskedField)
 
   # Diagnose statistics
-  sMin, sMax, sMean, sStd, sRMS = myStats(maskedField, yzWeight(y, z), debug=debug)
-  yLims = numpy.amin(yCoord), numpy.amax(yCoord)
-  zLims = boundaryStats(zCoord)
+  sMin, sMax, sMean, sStd, sRMS = stats.calc(maskedField, stats.yzWeight(y, z), debug=debug)
+  yLims = np.amin(yCoord), np.amax(yCoord)
+  zLims = coords.boundaryStats(zCoord)
 
   # Choose colormap
   if nbins is None and (clim is None or len(clim)==2): nbins=35
-  if colormap is None: colormap = chooseColorMap(sMin, sMax)
-  cmap, norm, extend = chooseColorLevels(sMin, sMax, colormap, clim=clim, nbins=nbins, extend=extend)
+  if colormap is None: colormap = cm.chooseColorMap(sMin, sMax)
+  cmap, norm, extend = cm.chooseColorLevels(sMin, sMax, colormap, clim=clim, nbins=nbins, extend=extend)
 
   if axis is None:
-    setFigureSize(aspect, resolution, debug=debug)
+    formatting.setFigureSize(aspect, resolution, debug=debug)
     #plt.gcf().subplots_adjust(left=.10, right=.99, wspace=0, bottom=.09, top=.9, hspace=0)
     axis = plt.gca()
   plt.pcolormesh(yCoord, zCoord, field2, cmap=cmap, norm=norm)
@@ -75,8 +86,8 @@ def yzplot(field, y=None, z=None,
   if sMean is not None:
     axis.annotate('mean=%.5g\nrms=%.5g'%(sMean,sRMS), xy=(1.0,1.01), xycoords='axes fraction', verticalalignment='bottom', horizontalalignment='right', fontsize=10)
     axis.annotate(' sd=%.5g\n'%(sStd), xy=(1.0,1.01), xycoords='axes fraction', verticalalignment='bottom', horizontalalignment='left', fontsize=10)
-  if len(ylabel+yunits)>0: plt.xlabel(label(ylabel, yunits))
-  if len(zlabel+zunits)>0: plt.ylabel(label(zlabel, zunits))
+  if len(ylabel+yunits)>0: plt.xlabel(formatting.label(ylabel, yunits))
+  if len(zlabel+zunits)>0: plt.ylabel(formatting.label(zlabel, zunits))
   if len(title)>0: plt.title(title)
   if len(suptitle)>0: plt.suptitle(suptitle)
 

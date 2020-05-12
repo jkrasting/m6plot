@@ -5,6 +5,7 @@
 __all__ = [
     'createXYcoords',
     'createXYlabels',
+    'createYZlabels',
     'label',
     'linCI',
     'pmCI',
