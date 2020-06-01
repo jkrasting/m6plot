@@ -8,6 +8,7 @@ __all__ = [
     'expand',
     'expandI',
     'expandJ',
+    'section2quadmesh',
     ]
 
 for func in __all__:

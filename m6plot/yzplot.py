@@ -3,7 +3,6 @@ from . import coords
 from . import formatting
 from . import stats
 import matplotlib.pyplot as plt
-import m6toolbox
 import numpy as np
 
 def yzplot(field, y=None, z=None,
@@ -57,7 +56,7 @@ def yzplot(field, y=None, z=None,
   else: raise Exception('Length of y coordinate should be equal or 1 longer than horizontal length of z')
   if ignore is not None: maskedField = np.ma.masked_array(field, mask=[field==ignore])
   else: maskedField = field.copy()
-  yCoord, zCoord, field2 = m6toolbox.section2quadmesh(y, z, maskedField)
+  yCoord, zCoord, field2 = coords.section2quadmesh(y, z, maskedField)
 
   # Diagnose statistics
   sMin, sMax, sMean, sStd, sRMS = stats.calc(maskedField, stats.yzWeight(y, z), debug=debug)
